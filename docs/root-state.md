@@ -2,6 +2,8 @@
 
 `root/collect-root-state.sh` is a read-only audit. Run it from a root shell and store its output outside Git.
 
+`root/export-framework-policy.sh <output-directory>` creates private TSV snapshots of the current Magisk settings/module flags and LSPosed/Vector module/scope tables. It uses mode `0700/0600`; copy the output to an ignored local backup, not into Git.
+
 The reusable configuration boundary is:
 
 - Magisk settings and module enable/disable state;

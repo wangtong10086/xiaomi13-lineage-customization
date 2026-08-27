@@ -1,0 +1,4 @@
+namespace	key	value
+secure	example_secure_key	example_value
+system	example_system_key	1
+global	example_obsolete_key	__DELETE__
