@@ -1,0 +1,7 @@
+package	group	page
+example.chat	communication	1
+example.mail	communication	1
+example.camera	media	2
+example.gallery	media	2
+example.bank	finance	3
+example.settings	system	4

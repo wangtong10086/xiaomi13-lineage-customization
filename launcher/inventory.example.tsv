@@ -1,0 +1,7 @@
+id	title	package	usage_seconds	launches
+10	Chat	example.chat	7200	40
+11	Mail	example.mail	3600	25
+12	Camera	example.camera	5400	30
+13	Gallery	example.gallery	1800	15
+14	Bank	example.bank	900	8
+15	Settings	example.settings	300	5
