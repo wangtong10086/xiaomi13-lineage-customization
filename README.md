@@ -7,7 +7,7 @@ Small, reviewable customizations used after moving a Xiaomi 13 (`fuxi`) from Hyp
 - `health/`: a bounded boot-time permission guard for the Qualcomm battery input-suspend node.
 - `launcher/`: export, plan, and apply a flat MIUI Launcher layout while keeping related apps adjacent and sorting by usage.
 - `magisk/`: reproducible Magisk module sources for narrowly scoped Xiaomi TSM/OMAPI compatibility fixes.
-- `root/`: read-only state collection for Magisk, enabled modules, LSPosed/Vector scope rows, SELinux, and startup health.
+- `root/`: read-only state collection plus a version-locked, backup-first MIUI Weather/MiuiCore mount-visibility repair.
 - `push/`: reproducible XMSF systemization, bounded GMS/FCM recovery, and fail-closed per-app XMSF registration workflows without private-data restores.
 - `settings/`: export Android settings/IME state and apply a reviewed allowlist to one explicit device.
 - `wallet/`: source-controlled Xiaomi Wallet two-stage signature/runtime compatibility scripts and recovery notes.
@@ -15,6 +15,8 @@ Small, reviewable customizations used after moving a Xiaomi 13 (`fuxi`) from Hyp
 
 The repository intentionally excludes launcher databases, package inventories, real deny-list entries, LSPosed databases, wallet data, and device logs. Keep those as local inputs under an ignored `work/` directory.
 
-All mutation scripts create a backup first and require an explicit input file. Review generated layouts before applying them.
+All mutation scripts create a backup first and require explicit target parameters. Layout import scripts additionally require an explicit input file; review generated layouts before applying them.
+
+MIUI Weather must remain outside the Magisk denylist on the current build because it consumes framework files supplied by the `MiuiCore` Magisk overlay. See `docs/miui-weather-overlay-visibility.md` before syncing root-hiding configuration.
 
 Proprietary Xiaomi APKs are never committed. Magisk module builders require the matching APK as an explicit local input and verify its SHA-256 before packaging it.
