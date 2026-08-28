@@ -16,14 +16,18 @@ Before installation, back up XMSF CE/DE data, the Vector module database, existi
 
 The MiPush Xposed module must use only its APK-declared default scopes plus reviewed target apps that need registration camouflage. Do not restore or copy the complete Vector database between systems.
 
-`Register-XmsfTarget.ps1` provides a bounded registration window for the seven reviewed user applications. It is read-only unless `-Apply` is supplied, accepts exactly one package per invocation, rejects Xiaomi payment helpers, removes only the exact main-process denylist entry, and restores both Vector scope and the original denylist state in `finally`. It never prints credentials or registration IDs and never writes XMSF tables directly:
+`Register-XmsfTarget.ps1` provides the general bounded audit. `Repair-XmsfAppRegistration.ps1` provides the exact-version compatibility workflow: it is read-only unless `-Apply` is supplied, accepts exactly one package per invocation, removes every exact target-package denylist entry only for the process lifetime, and restores compatibility scope, denylist, markers, and stopped state in `finally`. It never prints credentials or registration IDs and never writes XMSF tables directly:
 
 ```powershell
 ./Register-XmsfTarget.ps1 -Serial '<adb-serial>' -Package 'com.eg.android.AlipayGphone' -AdbPath '<path-to-adb>'
 ./Register-XmsfTarget.ps1 -Serial '<adb-serial>' -Package 'com.eg.android.AlipayGphone' -AdbPath '<path-to-adb>' -Apply
+./Repair-XmsfAppRegistration.ps1 -Serial '<adb-serial>' -Package 'com.eg.android.AlipayGphone' -Action Verify -AdbPath '<path-to-adb>'
+./Repair-XmsfAppRegistration.ps1 -Serial '<adb-serial>' -Package 'com.anjuke.android.app' -Action Register -AdbPath '<path-to-adb>' -Apply
 ```
 
 Success requires all three registration facts: a non-empty app regId, a new XMSF event with `type=21/result=0`, and `REGISTERED_APPLICATION.registered_type=1`. A `type=2` event alone is only a dispatched attempt. See the Android 16 compatibility matrix in the `xiaomi13-lsposed-compat` repository before expanding scope or adding an app-specific hook.
+
+`Register-XmsfViaVector.ps1` is a diagnostic reproducer for Vector 0.6.1's dynamic third-party dispatch limitation, not the preferred repair path. A Vector module-load line does not prove that `FakeDevice` or force-register hooks ran. If an application does not expose its own SDK and credential source, fail closed; never insert XMSF rows or borrow another package's SDK/credentials.
 
 Some applications also require a vendor token to be bound to their own server after XMSF registration. Feishu 7.75.15 is one observed case: a non-empty XMSF registration ID was present, but the external MiPush module did not execute Feishu's `registerSenderSuccessAndUploadToken(...)` callback because its legacy ByteDance network hook no longer attached. Use the separately reviewed `lark-mipush-token-bridge` module from the `xiaomi13-lsposed-compat` repository for this exact version boundary. Scope it only to `com.ss.android.lark`; do not generalize the callback to other applications.
 

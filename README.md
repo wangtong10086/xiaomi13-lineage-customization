@@ -8,7 +8,7 @@ Small, reviewable customizations used after moving a Xiaomi 13 (`fuxi`) from Hyp
 - `launcher/`: export, plan, and apply a flat MIUI Launcher layout while keeping related apps adjacent and sorting by usage.
 - `magisk/`: reproducible Magisk module sources for narrowly scoped Xiaomi TSM/OMAPI compatibility fixes.
 - `root/`: read-only state collection for Magisk, enabled modules, LSPosed/Vector scope rows, SELinux, and startup health.
-- `push/`: reproducible XMSF systemization and bounded GMS/FCM connection recovery without private-data restores.
+- `push/`: reproducible XMSF systemization, bounded GMS/FCM recovery, and fail-closed per-app XMSF registration workflows without private-data restores.
 - `settings/`: export Android settings/IME state and apply a reviewed allowlist to one explicit device.
 - `wallet/`: source-controlled Xiaomi Wallet two-stage signature/runtime compatibility scripts and recovery notes.
 - `docs/`: upgrade and rollback guidance.
