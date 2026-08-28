@@ -1,0 +1,6 @@
+id=xiaomi_tsm_privapp_fix
+name=Xiaomi TSM Priv-App and OMAPI Fix
+version=2.1
+versionCode=3
+author=Codex
+description=Systemize Xiaomi TSM Client and persist the minimal OMAPI service lookup required on LineageOS Android 16.

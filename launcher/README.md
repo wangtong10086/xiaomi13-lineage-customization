@@ -27,3 +27,13 @@ Create a category TSV with `package`, `group`, and `page`. Group order is the fi
 Review the TSV. Push it to `/data/local/tmp/launcher-layout.tsv`, then run `apply-launcher-layout.sh` in a root shell. The applier validates IDs, packages, coordinate collisions, and database integrity, and creates a timestamped database backup before changing anything.
 
 Numeric launcher IDs are installation-specific. Always regenerate a plan after restoring apps or updating the launcher.
+
+## Restore one missing shortcut
+
+If an application is installed and its launcher activity resolves but MIUI Launcher did not create a desktop row, use the fail-closed shortcut helper:
+
+```sh
+su -c 'sh ensure-launcher-shortcut.sh com.example.app com.example.app/.MainActivity "Example" 4 1 1'
+```
+
+The destination cell must be empty. The helper validates the component, creates a timestamped database backup, inserts or moves exactly one application shortcut, checks database integrity and coordinate collisions, and then restarts the launcher.
