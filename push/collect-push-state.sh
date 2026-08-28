@@ -19,6 +19,18 @@ echo "mipush_vector:"
 sqlite3 -header -column /data/adb/lspd/config/modules_config.db \
   "select m.mid,m.module_pkg_name,m.enabled,s.app_pkg_name,s.user_id from modules m left join scope s on s.mid=m.mid where m.module_pkg_name='io.github.magisk317.mipush' order by s.user_id,s.app_pkg_name;" 2>/dev/null || true
 
+echo "lark_mipush_bridge_vector:"
+sqlite3 -header -column /data/adb/lspd/config/modules_config.db \
+  "select m.mid,m.module_pkg_name,m.enabled,s.app_pkg_name,s.user_id from modules m left join scope s on s.mid=m.mid where m.module_pkg_name='com.codex.larkmipushtokenbridge' order by s.user_id,s.app_pkg_name;" 2>/dev/null || true
+
+echo "lark_xmsf_registration_and_recent_events:"
+sqlite3 -header -column /data/user/0/com.xiaomi.xmsf/databases/db \
+  "select pkg,blocked,registered_type,app_name from REGISTERED_APPLICATION where pkg='com.ss.android.lark'; select id,type,date,result,length(payload) as payload_bytes from EVENT where pkg='com.ss.android.lark' order by id desc limit 12;" 2>/dev/null || true
+
+echo "reviewed_target_xmsf_registration:"
+sqlite3 -header -column /data/user/0/com.xiaomi.xmsf/databases/db \
+  "select pkg,blocked,registered_type from REGISTERED_APPLICATION where pkg in ('com.anjuke.android.app','com.lietou.mishu','com.ss.android.ugc.aweme','com.MobileTicket','cn.gov.tax.its','com.chinamworld.main','com.eg.android.AlipayGphone') order by pkg; select e.id,e.pkg,e.type,e.date,e.result from EVENT e join (select pkg,max(id) as id from EVENT where pkg in ('com.anjuke.android.app','com.lietou.mishu','com.ss.android.ugc.aweme','com.MobileTicket','cn.gov.tax.its','com.chinamworld.main','com.eg.android.AlipayGphone') group by pkg) latest on latest.id=e.id order by e.pkg;" 2>/dev/null || true
+
 echo "xmsf_policy:"
 tail -n 20 /data/adb/xmsf-systemizer/policy.log 2>/dev/null || echo not-run
 
