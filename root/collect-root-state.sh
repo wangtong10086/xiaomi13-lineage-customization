@@ -34,6 +34,8 @@ ss -lnt 2>/dev/null | grep -E '[:.]22[[:space:]]' | sed -n '1p' || echo not-list
 
 echo "startup_logs:"
 for log in \
+  /data/adb/xmsf-systemizer/policy.log \
+  /data/adb/fcm-connectivity-guard/health.log \
   /data/local/tmp/fcm-clear-stopped-abx.log \
   /data/local/tmp/fcm-boot-fix.log \
   /data/local/tmp/esepower-fix.log \

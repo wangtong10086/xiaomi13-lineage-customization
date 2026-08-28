@@ -1,0 +1,6 @@
+id=fcm_connectivity_guard
+name=FCM connectivity guard
+version=1.0.0
+versionCode=1
+author=Codex
+description=Bounded GMS FCM connection recovery without app-data clears or package-restrictions edits.
