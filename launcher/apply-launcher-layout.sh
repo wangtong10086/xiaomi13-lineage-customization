@@ -21,7 +21,7 @@ sqlite3 "$DB" ".backup '$BACKUP'"
 chmod 0600 "$BACKUP"
 echo 'BEGIN IMMEDIATE;' > "$SQL"
 
-tail -n +2 "$PLAN" | while IFS="$(printf '\t')" read -r id package title screen x y rest; do
+tail -n +2 "$PLAN" | while IFS="$(printf '\t')" read -r id package _title screen x y rest; do
   count=$(sqlite3 "$DB" "SELECT COUNT(*) FROM favorites WHERE _id=$id AND itemType=0 AND intent LIKE '%component=$package/%';")
   [ "$count" = 1 ] || { echo "plan row does not uniquely match id=$id package=$package" >&2; exit 1; }
   printf 'UPDATE favorites SET container=-100,screen=%s,cellX=%s,cellY=%s WHERE _id=%s AND itemType=0;\n' "$screen" "$x" "$y" "$id" >> "$SQL"
