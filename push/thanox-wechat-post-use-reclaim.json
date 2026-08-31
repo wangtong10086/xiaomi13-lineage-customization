@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Codex WeChat Post-Use Nonstop Reclaimer",
+    "description": "After WeChat leaves the foreground, run Android am kill after a grace period only when it is still neither foreground nor holding audio focus; never force-stop.",
+    "priority": 1,
+    "delay": 30000,
+    "condition": "frontPkgChanged == true && from == \"com.tencent.mm\"",
+    "actions": [
+      "if (!thanos.activityManager.isAppForeground(\"com.tencent.mm\") && !thanos.audioManager.hasAudioFocus(\"com.tencent.mm\")) { result = su.exe(\"am kill com.tencent.mm\"); if (result != null && result.getCode() == 0) { io.writeAppend(\"wechat_post_use_reclaim.log\", \"epoch_ms=\" + System.currentTimeMillis() + \" package=com.tencent.mm outcome=am_kill_ok\\n\"); } else { io.writeAppend(\"wechat_post_use_reclaim.log\", \"epoch_ms=\" + System.currentTimeMillis() + \" package=com.tencent.mm outcome=am_kill_failed\\n\"); } } else { io.writeAppend(\"wechat_post_use_reclaim.log\", \"epoch_ms=\" + System.currentTimeMillis() + \" package=com.tencent.mm outcome=skipped_active\\n\"); }"
+    ]
+  }
+]

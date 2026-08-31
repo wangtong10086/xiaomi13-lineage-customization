@@ -2,7 +2,7 @@
 
 echo "boot=$(getprop sys.boot_completed) device=$(getprop ro.product.device) android=$(getprop ro.build.version.release) selinux=$(getenforce)"
 
-for pkg in com.xiaomi.xmsf io.github.magisk317.mipush com.ss.android.lark com.google.android.gms com.google.android.gm com.v2ray.ang; do
+for pkg in com.xiaomi.xmsf io.github.magisk317.mipush com.ss.android.lark com.google.android.gms com.google.android.gm com.tencent.mm github.tornaco.android.thanos com.v2ray.ang; do
   if cmd package path "$pkg" >/dev/null 2>&1; then
     version=$(dumpsys package "$pkg" 2>/dev/null | sed -n 's/^[[:space:]]*versionName=//p' | head -n 1)
     user=$(dumpsys package "$pkg" 2>/dev/null | grep 'User 0:' | head -n 1)
@@ -11,6 +11,38 @@ for pkg in com.xiaomi.xmsf io.github.magisk317.mipush com.ss.android.lark com.go
     echo "$pkg missing"
   fi
 done
+
+echo "wechat_fcm_redacted:"
+appid=/data/user/0/com.tencent.mm/shared_prefs/com.google.android.gms.appid.xml
+messaging=/data/user/0/com.tencent.mm/shared_prefs/com.google.firebase.messaging.xml
+[ -s "$appid" ] && echo "registration_file=present" || echo "registration_file=absent"
+grep -q 'name="|T|' "$appid" 2>/dev/null && echo "registration_entry=present" || echo "registration_entry=absent"
+if grep -Eq 'name="(auto_init|firebase_messaging_auto_init_enabled)"[^>]*(value="false"|>false<)' "$appid" "$messaging" 2>/dev/null; then
+  echo "auto_init=explicit_false"
+else
+  echo "auto_init=enabled_or_default"
+fi
+dumpsys package com.tencent.mm 2>/dev/null | grep 'User 0:' | head -n 1
+wechat_pids=$(pidof com.tencent.mm 2>/dev/null)
+[ -n "$wechat_pids" ] && echo "process=running count=$(echo "$wechat_pids" | wc -w)" || echo "process=absent"
+echo "standby_bucket=$(am get-standby-bucket com.tencent.mm 2>/dev/null | tr -d '\r\n')"
+
+echo "wechat_transport:"
+socket_count=$(ss -tnp 2>/dev/null | grep ':5228' | grep -c ESTAB)
+echo "mtalk_established_count=$socket_count"
+dumpsys deviceidle whitelist 2>/dev/null | grep -q 'com.google.android.gms' && echo "gms_idle_whitelist=present" || echo "gms_idle_whitelist=absent"
+
+echo "wechat_thanox_policy:"
+thanox_data=$(find /data/system -maxdepth 6 -type f -name thanos.xml 2>/dev/null | head -n 1)
+if [ -n "$thanox_data" ]; then
+  thanox_dir=$(dirname "$thanox_data")
+  grep -q 'channel_enabled_com.tencent.mm" value="true"' "$thanox_data" && echo "handler=thanox_delegate" || echo "handler=native_fcm"
+  grep -q '<string>com.tencent.mm</string>' "$thanox_dir/start_blocking_pkgs.xml" 2>/dev/null && echo "start_blocked=true" || echo "start_blocked=false"
+  grep -q '<string>com.tencent.mm</string>' "$thanox_dir/bg_restrict_pkgs.xml" 2>/dev/null && echo "background_restricted=true" || echo "background_restricted=false"
+  grep -q '<string>com.tencent.mm</string>' "$thanox_dir/smart_stand_by_pkgs.xml" 2>/dev/null && echo "smart_standby=true" || echo "smart_standby=false"
+else
+  echo "thanox_policy=unavailable"
+fi
 
 echo "xmsf_flags:"
 dumpsys package com.xiaomi.xmsf 2>/dev/null | grep -E 'pkgFlags=|privateFlags=' | head -n 4

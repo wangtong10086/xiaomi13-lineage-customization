@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Codex WeChat FCM Transport Telemetry",
+    "description": "Append only receive time and the fixed WeChat package name; never record payload or notification content.",
+    "priority": 1,
+    "delay": 0,
+    "condition": "fcmPushMessageArrived == true && pkgName == \"com.tencent.mm\"",
+    "actions": [
+      "io.writeAppend(\"wechat_fcm_transport.log\", \"epoch_ms=\" + System.currentTimeMillis() + \" package=com.tencent.mm\\n\");"
+    ]
+  }
+]

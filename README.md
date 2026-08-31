@@ -9,6 +9,7 @@ Small, reviewable customizations used after moving a Xiaomi 13 (`fuxi`) from Hyp
 - `magisk/`: reproducible Magisk module sources for narrowly scoped Xiaomi TSM/OMAPI compatibility fixes.
 - `root/`: read-only state collection plus version-locked, backup-first MIUI Weather and Gallery/MiuiCore mount-visibility repairs.
 - `push/`: reproducible XMSF systemization, bounded GMS/FCM recovery, and fail-closed per-app XMSF registration workflows without private-data restores.
+- `docs/wechat-push-without-resident-process.md`: staged native-FCM/Thanox runbook and privacy-safe acceptance matrix for WeChat without a resident WeChat process.
 - `settings/`: export Android settings/IME state and apply a reviewed allowlist to one explicit device.
 - `wallet/`: source-controlled Xiaomi Wallet two-stage signature/runtime compatibility scripts and recovery notes.
 - `docs/`: upgrade and rollback guidance.
