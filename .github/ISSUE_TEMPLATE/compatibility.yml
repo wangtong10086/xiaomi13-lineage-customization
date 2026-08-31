@@ -1,0 +1,40 @@
+name: Compatibility report
+description: Report a reproducible fuxi customization result without private data.
+title: "[Compatibility]: "
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: Sanitize logs. Never attach APKs, databases, tokens, identifiers, keys, wallet data, or message content.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [health, launcher, magisk, push, root, settings, wallet, documentation]
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Public device, ROM, and app versions
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction and observed result
+    validations:
+      required: true
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Backup and rollback result
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed private data, serials, tokens, keys, proprietary binaries, and message content.
+          required: true

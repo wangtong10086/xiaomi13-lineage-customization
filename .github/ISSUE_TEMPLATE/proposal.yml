@@ -1,0 +1,23 @@
+name: Change proposal
+description: Propose a bounded feature or compatibility change.
+title: "[Proposal]: "
+labels: [proposal]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and target scope
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Backup, fail-closed behavior, and rollback design
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Proposed validation
+    validations:
+      required: true

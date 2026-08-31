@@ -1,0 +1,60 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static-windows:
+    name: Static (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Parse PowerShell and JSON
+        shell: pwsh
+        run: |
+          $errors = @()
+          Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors)
+            $errors += $parseErrors
+          }
+          if ($errors.Count) { $errors | Format-List -Force; throw 'PowerShell parse failed.' }
+          Get-ChildItem -Recurse -Filter *.json | ForEach-Object { Get-Content -Raw $_.FullName | ConvertFrom-Json | Out-Null }
+      - name: Reproduce FCM connectivity guard
+        shell: pwsh
+        run: |
+          ./push/Build-FcmConnectivityGuard.ps1 -OutputZip "$env:RUNNER_TEMP/guard-a.zip"
+          ./push/Build-FcmConnectivityGuard.ps1 -OutputZip "$env:RUNNER_TEMP/guard-b.zip"
+          $a = (Get-FileHash "$env:RUNNER_TEMP/guard-a.zip" -Algorithm SHA256).Hash
+          $b = (Get-FileHash "$env:RUNNER_TEMP/guard-b.zip" -Algorithm SHA256).Hash
+          if ($a -ne $b) { throw 'FCM connectivity guard build is not deterministic.' }
+      - name: Build Thanox helper jars
+        shell: pwsh
+        run: |
+          $java = (Get-Command java).Source
+          $javac = (Get-Command javac).Source
+          $jar = (Get-Command jar).Source
+          $platform = Get-ChildItem "$env:ANDROID_HOME/platforms" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          $buildTools = Get-ChildItem "$env:ANDROID_HOME/build-tools" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          $androidJar = Join-Path $platform.FullName android.jar
+          $d8Jar = Join-Path $buildTools.FullName lib/d8.jar
+          ./push/Build-ThanoxWechatPushCli.ps1 -JavaPath $java -JavacPath $javac -JarPath $jar -D8JarPath $d8Jar -AndroidJarPath $androidJar -OutputPath "$env:RUNNER_TEMP/thanox-push.jar"
+          ./push/Build-ThanoxWechatFcmTelemetryCli.ps1 -JavaPath $java -JavacPath $javac -JarPath $jar -D8JarPath $d8Jar -AndroidJarPath $androidJar -OutputPath "$env:RUNNER_TEMP/thanox-telemetry.jar"
+      - name: Whitespace check
+        shell: pwsh
+        run: git diff --check
+
+  shell:
+    name: Shell (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Syntax and ShellCheck
+        run: |
+          find . -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
+          find . -type f -name '*.sh' -print0 | xargs -0 shellcheck

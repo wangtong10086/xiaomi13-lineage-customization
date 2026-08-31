@@ -1,6 +1,11 @@
 # Xiaomi 13 LineageOS customization
 
+English | [简体中文](README.zh-CN.md)
+
 Small, reviewable customizations used after moving a Xiaomi 13 (`fuxi`) from HyperOS-derived behavior to LineageOS/Android 16.
+
+> [!CAUTION]
+> This is a source and runbook repository, not a universal flash bundle. Every mutating workflow is device-, app-, ROM-, and version-sensitive. Read the matching guide, make a local backup, and validate the target before applying anything.
 
 ## Included
 
@@ -23,3 +28,13 @@ MIUI Weather must remain outside the Magisk denylist on the current build becaus
 MIUI Gallery has the same mount-visibility constraint for MIUI framework and MiCloud classes. Keep every `com.miui.gallery` process outside the denylist and see `docs/miui-gallery-overlay-visibility.md` before syncing root-hiding configuration.
 
 Proprietary Xiaomi APKs are never committed. Magisk module builders require the matching APK as an explicit local input and verify its SHA-256 before packaging it.
+
+## Project status
+
+The checked-in scripts document a locally validated `fuxi` configuration and are published for review and adaptation. Exact-version checks are intentional. A successful result on one ROM/app version does not imply compatibility with another.
+
+For WeChat, the current design keeps the package out of Android's force-stopped state, lets FCM/Thanox deliver and open the correct conversation, then reclaims WeChat processes after the configured post-use delay. See the dedicated runbook before changing any timeout, component, or Thanox rule.
+
+## Contributing and security
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Report vulnerabilities or accidental exposure through GitHub private vulnerability reporting; see [SECURITY.md](SECURITY.md).
